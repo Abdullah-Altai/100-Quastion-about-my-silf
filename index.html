@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>أسئلة شخصية 🔒</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial;}
+
+body{
+  min-height:100vh;
+  background:#111;
+  color:white;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:20px;
+}
+
+.box{
+  width:100%;
+  max-width:600px;
+  background:#1c1c1c;
+  padding:30px;
+  border-radius:20px;
+  text-align:center;
+}
+
+h1{margin-bottom:15px;}
+
+#progress{
+  margin-bottom:15px;
+  opacity:.7;
+}
+
+input{
+  width:100%;
+  padding:15px;
+  border:none;
+  border-radius:10px;
+  margin-top:15px;
+  font-size:16px;
+}
+
+button{
+  margin-top:20px;
+  padding:12px 25px;
+  border:none;
+  border-radius:20px;
+  background:#00c896;
+  color:black;
+  font-size:16px;
+  cursor:pointer;
+}
+
+button:hover{
+  background:#00ffbf;
+}
+
+.result{
+  text-align:right;
+  max-height:400px;
+  overflow:auto;
+  margin-top:20px;
+}
+
+.q{
+  margin-bottom:10px;
+  color:#00ffbf;
+}
+
+.a{
+  margin-bottom:20px;
+  padding:10px;
+  background:#2a2a2a;
+  border-radius:10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+
+<h1>🔒 أسئلة شخصية</h1>
+<div id="progress"></div>
+
+<div id="question"></div>
+
+<input id="answer" placeholder="اكتب إجابتك هنا">
+
+<button onclick="nextQuestion()">التالي</button>
+
+<div id="result" class="result"></div>
+
+</div>
+
+<script>
+const questions = [
+"شنو أكثر شي تخاف منه بدون سبب؟",
+"إذا بقيت وحدك يوم كامل، شتفكر؟",
+"شنو أكثر ذكرى ما تنساها؟",
+"هل تثق بالناس بسهولة؟",
+"شنو الشي اللي مستحيل تقوله لأحد؟",
+"إذا زعلت، شتسوي؟",
+"شنو أكثر شي يضايقك من الناس؟",
+"تحب تكون وحدك لو ويا ناس؟",
+"شنو أكثر قرار ندمت عليه؟",
+"شنو الشي اللي يخليك تبچي؟",
+
+"هل تخاف من المستقبل؟",
+"شنو أكبر سر بحياتك؟",
+"تشوف نفسك قوي نفسياً؟",
+"شنو أكثر شي تحبه بنفسك؟",
+"شنو أكثر شي تكرهه بنفسك؟",
+"هل تتأثر بكلام الناس؟",
+"شنو موقف غيرك؟",
+"هل تندم بسرعة؟",
+"شنو الشي اللي تخاف تخسره؟",
+"تحب تعبر عن مشاعرك؟",
+
+"شنو أكبر حلم عندك؟",
+"تحب الماضي لو الحاضر؟",
+"شنو أكثر شي تفكر بي قبل النوم؟",
+"هل تحس نفسك مفهوم من الناس؟",
+"تحب تكون قائد لو تابع؟",
+"شنو الشي اللي يخليك سعيد؟",
+"شنو الشي اللي يخليك عصبي؟",
+"هل تسامح بسهولة؟",
+"شنو أكثر شي يحفزك؟",
+"تحب التغيير لو الروتين؟",
+
+"هل تحب المغامرة؟",
+"شنو أكثر شي تخجل منه؟",
+"هل تخاف من الفشل؟",
+"شنو أكثر موقف محرج؟",
+"هل تعتمد على نفسك؟",
+"تحب الوحدة؟",
+"شنو الشي اللي تتمنى تغيره؟",
+"هل تفكر كثير؟",
+"شنو أكبر إنجاز؟",
+"شنو أكثر شي تضحي بي؟",
+
+"هل تثق بقراراتك؟",
+"شنو أكثر شي يقلقك؟",
+"هل تحب المفاجآت؟",
+"شنو الشي اللي ما تنساه؟",
+"هل تحب تساعد الناس؟",
+"شنو أكثر شي يضيع وقتك؟",
+"هل عندك صديق مقرب؟",
+"شنو الشي اللي تتمناه يصير؟",
+"هل أنت صريح؟",
+"شنو أكثر شي يزعجك؟",
+
+"هل تحب الحياة؟",
+"شنو أكبر خوف؟",
+"هل أنت متفائل؟",
+"شنو أكثر شي يضحكك؟",
+"هل تحب الناس؟",
+"شنو أكثر شي تتمنى؟",
+"هل تحب التحدي؟",
+"شنو أكثر شي تتعلمه؟",
+"هل تحب نفسك؟",
+"شنو أكثر شي تحبه بالحياة؟",
+
+"هل تخاف من الوحدة؟",
+"شنو أكثر شي تتذكره؟",
+"هل تحب المغامرات؟",
+"شنو أكثر شي يهمك؟",
+"هل تحب تساعد غيرك؟",
+"شنو أكثر شي يغير مزاجك؟",
+"هل تحب السفر؟",
+"شنو أكثر شي تتمنى تحققه؟",
+"هل تحب التغيير؟",
+"شنو أكثر شي تحب تتعلمه؟",
+
+"هل تحب التحديات؟",
+"شنو أكثر شي تخاف تفقده؟",
+"هل أنت شخص اجتماعي؟",
+"شنو أكثر شي تحب تعمله؟",
+"هل تحب العمل؟",
+"شنو أكثر شي تحب تشتريه؟",
+"هل تحب الصراحة؟",
+"شنو أكثر شي تتمنى تغيره؟",
+"هل تحب الحياة البسيطة؟",
+"شنو أكثر شي يسعدك؟",
+
+"هل تحب نفسك مثل ما أنت؟",
+"شنو أكثر شي تحب تغيره؟",
+"هل أنت شخص هادئ؟",
+"شنو أكثر شي يزعجك؟",
+"هل تحب التحدي؟",
+"شنو أكثر شي تتمنى يصير؟",
+"هل تحب الوحدة؟",
+"شنو أكثر شي يهمك؟",
+"هل تحب المغامرة؟",
+"شنو أكثر شي تخاف منه؟"
+];
+
+let index = 0;
+let answers = [];
+
+function showQuestion(){
+  document.getElementById("question").innerHTML = questions[index];
+  document.getElementById("progress").innerHTML = (index+1) + " / 100";
+}
+
+function nextQuestion(){
+  const input = document.getElementById("answer");
+  const value = input.value.trim();
+
+  if(value === ""){
+    alert("اكتب جواب!");
+    return;
+  }
+
+  answers.push(value);
+  input.value = "";
+
+  index++;
+
+  if(index < questions.length){
+    showQuestion();
+  }else{
+    showResult();
+  }
+}
+
+function showResult(){
+  document.getElementById("question").style.display = "none";
+  document.getElementById("answer").style.display = "none";
+  document.querySelector("button").style.display = "none";
+  document.getElementById("progress").innerHTML = "✅ انتهيت";
+
+  let html = "";
+
+  for(let i = 0; i < answers.length; i++){
+    html += `<div class="q">${questions[i]}</div>`;
+    html += `<div class="a">${answers[i]}</div>`;
+  }
+
+  document.getElementById("result").innerHTML = html;
+}
+
+showQuestion();
+</script>
+
+</body>
+</html>
