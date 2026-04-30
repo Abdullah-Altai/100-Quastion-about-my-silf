@@ -2,98 +2,184 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>أسئلة شخصية 🔒</title>
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial;}
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial, sans-serif;
+}
 
 body{
   min-height:100vh;
-  background:#111;
-  color:white;
+  background:linear-gradient(135deg,#dfe9f3,#ffffff,#e8dff5);
+  color:#333;
   display:flex;
   justify-content:center;
   align-items:center;
   padding:20px;
+  overflow:hidden;
+}
+
+.hearts{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+  z-index:1;
+}
+
+.heart{
+  position:absolute;
+  top:-40px;
+  color:rgba(255,120,170,.55);
+  animation:fall linear infinite;
+}
+
+@keyframes fall{
+  from{
+    transform:translateY(-50px) rotate(0deg);
+    opacity:1;
+  }
+  to{
+    transform:translateY(110vh) rotate(360deg);
+    opacity:0;
+  }
 }
 
 .box{
   width:100%;
-  max-width:600px;
-  background:#1c1c1c;
+  max-width:650px;
+  background:rgba(255,255,255,.75);
+  backdrop-filter:blur(12px);
   padding:30px;
-  border-radius:20px;
+  border-radius:25px;
   text-align:center;
+  box-shadow:0 15px 40px rgba(0,0,0,.12);
+  position:relative;
+  z-index:2;
 }
 
-h1{margin-bottom:15px;}
+h1{
+  margin-bottom:15px;
+  color:#7d5fff;
+}
 
 #progress{
   margin-bottom:15px;
-  opacity:.7;
+  color:#777;
+}
+
+#question{
+  font-size:22px;
+  line-height:1.8;
+  margin:20px 0;
 }
 
 input{
   width:100%;
   padding:15px;
-  border:none;
-  border-radius:10px;
+  border:1px solid #ddd;
+  border-radius:15px;
   margin-top:15px;
   font-size:16px;
+  outline:none;
+  background:white;
+}
+
+input:focus{
+  border-color:#7d5fff;
+  box-shadow:0 0 10px rgba(125,95,255,.25);
 }
 
 button{
-  margin-top:20px;
+  margin-top:18px;
   padding:12px 25px;
   border:none;
-  border-radius:20px;
-  background:#00c896;
-  color:black;
+  border-radius:25px;
+  background:#7d5fff;
+  color:white;
   font-size:16px;
   cursor:pointer;
+  transition:.3s;
 }
 
 button:hover{
-  background:#00ffbf;
+  transform:scale(1.05);
+  background:#6c4df5;
+}
+
+.skip{
+  background:#aaa;
+}
+
+.skip:hover{
+  background:#888;
+}
+
+.musicBtn{
+  background:#ff7eb3;
 }
 
 .result{
   text-align:right;
-  max-height:400px;
+  max-height:430px;
   overflow:auto;
   margin-top:20px;
+  padding-left:5px;
 }
 
 .q{
-  margin-bottom:10px;
-  color:#00ffbf;
+  margin-bottom:8px;
+  color:#7d5fff;
+  font-weight:bold;
 }
 
 .a{
   margin-bottom:20px;
-  padding:10px;
-  background:#2a2a2a;
-  border-radius:10px;
+  padding:12px;
+  background:#f3f0ff;
+  border-radius:12px;
+  line-height:1.7;
+}
+
+.skipped{
+  color:#888;
+  background:#eee;
+}
+
+.note{
+  font-size:14px;
+  color:#777;
+  margin-top:10px;
 }
 </style>
 </head>
 
 <body>
 
+<div class="hearts" id="hearts"></div>
+
 <div class="box">
+  <h1>🔒 أسئلة شخصية</h1>
+  <div id="progress"></div>
 
-<h1>🔒 أسئلة شخصية</h1>
-<div id="progress"></div>
+  <div id="question"></div>
 
-<div id="question"></div>
+  <input id="answer" placeholder="اكتب إجابتك هنا">
 
-<input id="answer" placeholder="اكتب إجابتك هنا">
+  <br>
 
-<button onclick="nextQuestion()">التالي</button>
+  <button onclick="nextQuestion()">التالي</button>
+  <button class="skip" onclick="skipQuestion()">تخطي</button>
 
-<div id="result" class="result"></div>
 
+  <div id="result" class="result"></div>
 </div>
 
 <script>
@@ -108,7 +194,6 @@ const questions = [
 "تحب تكون وحدك لو ويا ناس؟",
 "شنو أكثر قرار ندمت عليه؟",
 "شنو الشي اللي يخليك تبچي؟",
-
 "هل تخاف من المستقبل؟",
 "شنو أكثر شي تفكر بي قبل النوم؟",
 "هل تشوف نفسك قوي نفسياً؟",
@@ -119,7 +204,6 @@ const questions = [
 "هل تندم بسرعة؟",
 "شنو الشي اللي تخاف تخسره؟",
 "تحب تعبر عن مشاعرك؟",
-
 "شنو أكبر حلم عندك؟",
 "تحب الماضي لو الحاضر؟",
 "هل تحس نفسك مفهوم من الناس؟",
@@ -130,7 +214,6 @@ const questions = [
 "شنو أكثر شي يحفزك؟",
 "تحب التغيير لو الروتين؟",
 "هل تحب المغامرة؟",
-
 "شنو أكثر موقف محرج صارلك؟",
 "هل تخاف من الفشل؟",
 "هل تعتمد على نفسك؟",
@@ -141,7 +224,6 @@ const questions = [
 "شنو الشي اللي ممكن تضحي بي؟",
 "هل تثق بقراراتك؟",
 "شنو أكثر شي يقلقك؟",
-
 "هل تحب المفاجآت؟",
 "شنو أكثر شي ما تنساه؟",
 "هل تحب تساعد الناس؟",
@@ -152,7 +234,6 @@ const questions = [
 "شنو أكثر شي يزعجك؟",
 "هل تحب الحياة؟",
 "هل أنت متفائل؟",
-
 "شنو أكثر شي يضحكك؟",
 "هل تحب الناس بشكل عام؟",
 "شنو أكثر شي تتمناه حالياً؟",
@@ -163,7 +244,6 @@ const questions = [
 "هل تخاف من الوحدة؟",
 "شنو أكثر شي تتذكره دائماً؟",
 "هل تحب السفر؟",
-
 "شنو أكثر شي يغير مزاجك بسرعة؟",
 "هل تحب تبدأ أشياء جديدة؟",
 "شنو أكثر شي تعتبره مهم بحياتك؟",
@@ -174,7 +254,6 @@ const questions = [
 "هل تحب الصراحة لو المجاملة؟",
 "شنو أكثر شي تتمنى تغييره بالمجتمع؟",
 "هل تحب الحياة البسيطة؟",
-
 "شنو أكثر شي يسعدك يومياً؟",
 "هل تحب المغامرات الخطرة؟",
 "شنو أكثر شي تخاف تفقده؟",
@@ -185,7 +264,6 @@ const questions = [
 "هل تحب التحديات الصعبة؟",
 "شنو أكثر شي يجعلك فخور بنفسك؟",
 "هل تحب تكون تحت الضغط؟",
-
 "شنو أكثر شي تحب تغيره بشخصيتك؟",
 "هل تحب تكون مختلف عن الآخرين؟",
 "شنو أكثر شي يجذبك بالناس؟",
@@ -196,7 +274,6 @@ const questions = [
 "هل تحب العزلة أحياناً؟",
 "شنو أكثر شي يعطيك طاقة إيجابية؟",
 "هل تحب التفكير العميق؟",
-
 "شنو أكثر شي يسبب لك توتر؟",
 "هل تحب التغيير المفاجئ؟",
 "شنو أكثر شي تحب تحققه قريباً؟",
@@ -214,7 +291,7 @@ let answers = [];
 
 function showQuestion(){
   document.getElementById("question").innerHTML = questions[index];
-  document.getElementById("progress").innerHTML = (index+1) + " / 100";
+  document.getElementById("progress").innerHTML = (index + 1) + " / " + questions.length;
 }
 
 function nextQuestion(){
@@ -222,13 +299,22 @@ function nextQuestion(){
   const value = input.value.trim();
 
   if(value === ""){
-    alert("اكتب جواب!");
+    alert("اكتب جواب أو اضغط تخطي");
     return;
   }
 
   answers.push(value);
   input.value = "";
+  goNext();
+}
 
+function skipQuestion(){
+  answers.push("⏭️ تم التخطي");
+  document.getElementById("answer").value = "";
+  goNext();
+}
+
+function goNext(){
   index++;
 
   if(index < questions.length){
@@ -241,18 +327,42 @@ function nextQuestion(){
 function showResult(){
   document.getElementById("question").style.display = "none";
   document.getElementById("answer").style.display = "none";
-  document.querySelector("button").style.display = "none";
+  document.querySelectorAll("button").forEach(btn => btn.style.display = "none");
+  document.querySelector(".note").style.display = "none";
   document.getElementById("progress").innerHTML = "✅ انتهيت";
 
   let html = "";
 
   for(let i = 0; i < answers.length; i++){
-    html += `<div class="q">${questions[i]}</div>`;
-    html += `<div class="a">${answers[i]}</div>`;
+    html += `<div class="q">${i+1}. ${questions[i]}</div>`;
+
+    if(answers[i] === "⏭️ تم التخطي"){
+      html += `<div class="a skipped">${answers[i]}</div>`;
+    }else{
+      html += `<div class="a">${answers[i]}</div>`;
+    }
   }
 
   document.getElementById("result").innerHTML = html;
 }
+
+function createHeart(){
+  const heart = document.createElement("div");
+  heart.className = "heart";
+  heart.innerHTML = Math.random() > 0.5 ? "♡" : "♥";
+  heart.style.left = Math.random() * 100 + "vw";
+  heart.style.fontSize = (16 + Math.random() * 24) + "px";
+  heart.style.animationDuration = (5 + Math.random() * 6) + "s";
+  heart.style.opacity = Math.random();
+  document.getElementById("hearts").appendChild(heart);
+
+  setTimeout(() => {
+    heart.remove();
+  }, 11000);
+}
+
+setInterval(createHeart, 350);
+
 
 showQuestion();
 </script>
